@@ -28,16 +28,16 @@ contract Auction {
     
     /* Function to process bid.
      */
-    function bid() public payable {
+    function bid(address _bidder, uint _bid) public payable {
         /* Check if the bid is greater than the current highest bid
          */
-        require(msg.value > highestBid, "Not high enough bid!");
+        require(_bid > highestBid, "Not high enough bid!");
         /* Update status variable and the amount to return,
          */
-        highestBid = msg.value;
-        highestBidder = msg.sender;
-        userBalances[msg.sender] = msg.value;
-        contractBalance += msg.value;
+        highestBid = _bid;
+        highestBidder = _bidder;
+        userBalances[_bidder] = _bid;
+        contractBalance += _bid;
     }
     
     /* Function to withdraw the amount of bid to return.
@@ -55,5 +55,7 @@ contract Auction {
         contractBalance -= _bid;
     }
     
-    receive() external payable {}
+    receive() external payable {
+    	bid(msg.sender, msg.value);
+    }
 }
