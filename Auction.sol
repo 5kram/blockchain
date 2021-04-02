@@ -5,13 +5,12 @@ pragma solidity >=0.7.0;
 contract Auction {
     address public highestBidder;
     uint public highestBid;
-    uint contractBalance = 0;
+    uint public contractBalance = 0;
     /* Mapping for the amount to return.
      */
     mapping(address => uint) private userBalances;
     
-    /* Initialize highest bid, bidder's address 
-     * and the manager of the auction.
+    /* Initialize highest bid, bidder's address.
      */
     constructor() {
         highestBid = 0;
@@ -54,10 +53,6 @@ contract Auction {
         userBalances[msg.sender] = 0;
         require(payable(msg.sender).send(_bid),"Could not send bid.");
         contractBalance -= _bid;
-    }
-    
-    function getContractBalance() public view returns(uint) {
-        return contractBalance;
     }
     
     receive() external payable {}
