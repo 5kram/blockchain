@@ -1,0 +1,153 @@
+0.
+$ ./geth --identity "Node1" --datadir node1 --nat "extip:127.0.0.1" --port 50001 --nodiscover --networkid 1000 --http --http.port 51001 --http.api "eth,net,web3,miner,admin,personal" --http.corsdomain "*" --allow-insecure-unlock
+
+$ ./geth attach http://localhost:51001
+
+> personal.newAccount()
+	> "password"
+> personal.newAccount()
+	> "password"
+> eth.accounts
+	["0x119327c9de3116ace0fdda193da22f1f4302dbfe", "0x259d66465a20972e2a56e818ddd4f4b64a91a985", "0x1bbdf35f1d9aee9c24af34b0760cfd3785f7b719"]
+
+> web3.personal.unlockAccount(eth.accounts[0], "password", 100000)
+> web3.personal.unlockAccount(eth.accounts[1], "password", 100000)
+> web3.personal.unlockAccount(eth.accounts[2], "password", 100000)
+
+
+> eth.sendTransaction({from:eth.accounts[0], to:eth.accounts[1],value: 100000000000000000000})
+> eth.sendTransaction({from:eth.accounts[0], to:eth.accounts[2],value: 100000000000000000000})
+
+> miner.setEtherbase(eth.accounts[0])
+> eth.coinbase
+> miner.start(1)
+
+> eth.getBalance(eth.accounts[0])
+	40000000003000000000
+> eth.getBalance(eth.accounts[1])
+	100000000000000000000
+> eth.getBalance(eth.accounts[2])
+	100000000000000000000
+
+2.
+$ solc --abi Auction.sol 
+	"abitxt"
+$ solc --bin Auction.sol 
+	"bintxt"
+	
+> var abi = eth.contract(abitxt)
+> var bytecode = '0xbintxt'
+
+3.
+> var AuctionDeployed = abi.new({from: eth.accounts[0], data: bytecode, gas: 2000000})
+> AuctionDeployed.address
+	"0xb73a8c5d2f19acd4a531618e354a82fdcc62be72"
+> var AuctionInstance = abi.at(AuctionDeployed.address)
+
+> web3.eth.defaultAccount = eth.accounts[0]
+	"0x119327c9de3116ace0fdda193da22f1f4302dbfe"
+
+4.
+> eth.getBalance(eth.accounts[0])
+	84000000003000000000
+> eth.getBalance(eth.accounts[1])
+	100000000000000000000
+> AuctionInstance.highestBid.call()
+	0
+> AuctionInstance.highestBidder.call()
+	"0x0000000000000000000000000000000000000000"
+
+5.
+> AuctionInstance.bid({from: eth.accounts[1], value:5000000000000000000, gas: 4000000})
+"0xc1977e1a61f543f009e5f42c0cdcd2b688dc8865bf82621f7a9aa1b6fad8d846"
+> eth.getTransaction("0xc1977e1a61f543f009e5f42c0cdcd2b688dc8865bf82621f7a9aa1b6fad8d846")
+{
+  blockHash: "0x80bae08eb503ad36d5fd5a00705120ae4e3bc40b64e7d85731c4fddebf5c3775",
+  blockNumber: 375,
+  from: "0x259d66465a20972e2a56e818ddd4f4b64a91a985",
+  gas: 4000000,
+  gasPrice: 1000000000,
+  hash: "0xc1977e1a61f543f009e5f42c0cdcd2b688dc8865bf82621f7a9aa1b6fad8d846",
+  input: "0x1998aeef",
+  nonce: 1,
+  r: "0x15c7f407c3a91a779e4bb852c4701241ef05cbd21bb2f94d3d78a7001d48d688",
+  s: "0x608c302a6657fed50633008cbf27e4ebe560cb424a22f5316236c801131b5a90",
+  to: "0xb73a8c5d2f19acd4a531618e354a82fdcc62be72",
+  transactionIndex: 0,
+  type: "0x0",
+  v: "0x41",
+  value: 5000000000000000000
+}
+
+6.
+> AuctionInstance.contractBalance.call()
+	5000000000000000000
+> eth.getBalance(eth.accounts[1])
+	94999856703000000000
+> eth.getBalance(eth.accounts[2])
+	100000000000000000000
+> AuctionInstance.highestBid.call()
+	5000000000000000000
+> AuctionInstance.highestBidder.call()
+	"0x259d66465a20972e2a56e818ddd4f4b64a91a985"
+
+
+7.
+> AuctionInstance.bid({from: eth.accounts[2], value:10000000000000000000, gas: 4000000})
+"0xa80b87f3eaec89739646c39df0f39f19ff84ab92cb8a36d33e2beb651547779d"
+> eth.getTransaction("0xa80b87f3eaec89739646c39df0f39f19ff84ab92cb8a36d33e2beb651547779d")
+{
+  blockHash: "0x16f2d5612b45e5d93476423b9cb195c65a81beef3c16b72025a24bb1de8ffc22",
+  blockNumber: 443,
+  from: "0x1bbdf35f1d9aee9c24af34b0760cfd3785f7b719",
+  gas: 4000000,
+  gasPrice: 1000000000,
+  hash: "0xa80b87f3eaec89739646c39df0f39f19ff84ab92cb8a36d33e2beb651547779d",
+  input: "0x1998aeef",
+  nonce: 0,
+  r: "0x6847ed4b8eb9afe1962a4a985ec51aa817319d3de222525d6f3b7e9e968ad3e",
+  s: "0x6b142817079e2cca0fb0a431c2a6a8e8e68c24f864dc90927b99e8ae0d4c2d61",
+  to: "0xb73a8c5d2f19acd4a531618e354a82fdcc62be72",
+  transactionIndex: 0,
+  type: "0x0",
+  v: "0x42",
+  value: 10000000000000000000
+}
+
+8.
+> AuctionInstance.contractBalance.call()
+	15000000000000000000
+> eth.getBalance(eth.accounts[2])
+	89999941703000000000
+> AuctionInstance.highestBid.call()
+	10000000000000000000
+> AuctionInstance.highestBidder.call()
+	"0x1bbdf35f1d9aee9c24af34b0760cfd3785f7b719"
+
+9.
+> AuctionInstance.withdraw({from: eth.accounts[1]})
+"0xe23e703f95c7719a238200502c9feec3a2ae8158db2497769c02d9d780a0764c"
+> eth.getTransaction("0xe23e703f95c7719a238200502c9feec3a2ae8158db2497769c02d9d780a0764c")
+{
+  blockHash: "0x6d3fc570e04a7f1965eb1b0a4afd23f6522d6e2d7eef335d23d40e28121f70f4",
+  blockNumber: 471,
+  from: "0x259d66465a20972e2a56e818ddd4f4b64a91a985",
+  gas: 40663,
+  gasPrice: 1000000000,
+  hash: "0xe23e703f95c7719a238200502c9feec3a2ae8158db2497769c02d9d780a0764c",
+  input: "0x3ccfd60b",
+  nonce: 2,
+  r: "0x45412da166642e9eeeac43c76b21d348a661fd93a847fd17f7b1faec3b0158fa",
+  s: "0x64a4e172fcccd5b1bd204a4a05a846e8e046221d9a00bc5d9ed21b985f290c2f",
+  to: "0xb73a8c5d2f19acd4a531618e354a82fdcc62be72",
+  transactionIndex: 0,
+  type: "0x0",
+  v: "0x41",
+  value: 0
+}
+
+10.
+> AuctionInstance.contractBalance.call()
+	10000000000000000000
+> eth.getBalance(eth.accounts[1])
+	99999872254000000000
