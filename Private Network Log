@@ -1,0 +1,96 @@
+$ geth account new
+	{password}
+$ geth account new
+	{password}
+$ geth account new
+	{password}
+
+
+$ ./geth --datadir node1 account new
+	{address: 0x119327C9DE3116acE0FddA193DA22F1F4302DBfe}
+$ ./geth --datadir node2 account new
+	{address: 0x1Ed23f7a370a309E7609a078aA39CBBfc7e76109}	
+$ ./geth --datadir node3 account new
+	{address: 0xc4dfA1643b0dDE2E8777C0aeBBe4C1FE5e0720dC}
+
+
+$ cat > genesis.json
+{
+  "config": {
+    "chainId": 15,
+    "homesteadBlock": 0,
+    "eip150Block": 0,
+    "eip155Block": 0,
+    "eip158Block": 0,
+    "byzantiumBlock": 0,
+    "constantinopleBlock": 0,
+    "petersburgBlock": 0,
+    "ethash": {}
+  },
+  "difficulty": "1",
+  "gasLimit": "8000000",
+  "alloc": {
+    "0x119327C9DE3116acE0FddA193DA22F1F4302DBfe": { "balance": "3000000000" },
+    "0x1Ed23f7a370a309E7609a078aA39CBBfc7e76109": { "balance": "4000000000" },
+    "0xc4dfA1643b0dDE2E8777C0aeBBe4C1FE5e0720dC": { "balance": "4000000000" }
+  }
+}
+
+
+$ ./geth --identity "Node1" --datadir node1 --nat "extip:127.0.0.1" --port 50001 --nodiscover --networkid 1000 --http --http.port 51001 --http.api "eth,net,web3,miner,admin,personal" --http.corsdomain "*" --allow-insecure-unlock
+$ ./geth --identity "Node2" --datadir node2 --nat "extip:127.0.0.1" --port 50002 --nodiscover --networkid 1000 --http --http.port 51002 --http.api "eth,net,web3,miner,admin,personal" --http.corsdomain "*" --allow-insecure-unlock
+$ ./geth --identity "Node3" --datadir node3 --nat "extip:127.0.0.1" --port 50003 --nodiscover --networkid 1000 --http --http.port 51003 --http.api "eth,net,web3,miner,admin,personal" --http.corsdomain "*" --allow-insecure-unlock
+
+
+(n1)$ ./geth attach http://localhost:51001
+	{datadir: /home/mark/geth-linux-amd64-1.10.1-c2d2f4ed/node1}
+(n2)$ ./geth attach http://localhost:51002
+	{datadir: /home/mark/geth-linux-amd64-1.10.1-c2d2f4ed/node2}
+(n3)$ ./geth attach http://localhost:51003
+	{datadir: /home/mark/geth-linux-amd64-1.10.1-c2d2f4ed/node3}
+
+
+(n1)> admin.nodeInfo
+	{"enode://ffd81a7c3ebd5e86f32330a82dd6e0549d4d308cd5bdc3b005cb31ab59103b76b2d60e15caed8299c7318b72d0b348d47863323ec98001cea881b07cb2b83919@127.0.0.1:50001?discport=0"}
+	
+(n2)> admin.nodeInfo
+	{"enode://ef90f9ab01542fb2dc5dc88b28a36f63ad2732b5eea9dcdacd4b9d0bd76865273a711584fd09d63cda7d4df07c1e8dfd3bf5df37c50e1e1f228659880ee2f80f@127.0.0.1:50002?discport=0"}
+	
+(n3)> admin.nodeInfo
+	{enode: "enode://9dd60f5c7a368cdf17c9b2c6fb03480f7eb6150d8d81d59c5823eba475d5c3f28a755491ffd693c0ac60c5b525bcf20d8e462d4fa18c287434beec325061d0a7@127.0.0.1:50003?discport=0"}
+
+
+(n1)> admin.addPeer("enode://ef90f9ab01542fb2dc5dc88b28a36f63ad2732b5eea9dcdacd4b9d0bd76865273a711584fd09d63cda7d4df07c1e8dfd3bf5df37c50e1e1f228659880ee2f80f@127.0.0.1:50002?discport=0")
+(n1)> admin.addPeer("enode://9dd60f5c7a368cdf17c9b2c6fb03480f7eb6150d8d81d59c5823eba475d5c3f28a755491ffd693c0ac60c5b525bcf20d8e462d4fa18c287434beec325061d0a7@127.0.0.1:50003?discport=0")
+
+(n2)> admin.addPeer("enode://ffd81a7c3ebd5e86f32330a82dd6e0549d4d308cd5bdc3b005cb31ab59103b76b2d60e15caed8299c7318b72d0b348d47863323ec98001cea881b07cb2b83919@127.0.0.1:50001?discport=0")
+(n2)> admin.addPeer("enode://9dd60f5c7a368cdf17c9b2c6fb03480f7eb6150d8d81d59c5823eba475d5c3f28a755491ffd693c0ac60c5b525bcf20d8e462d4fa18c287434beec325061d0a7@127.0.0.1:50003?discport=0")
+
+(n3)> admin.addPeer("enode://ef90f9ab01542fb2dc5dc88b28a36f63ad2732b5eea9dcdacd4b9d0bd76865273a711584fd09d63cda7d4df07c1e8dfd3bf5df37c50e1e1f228659880ee2f80f@127.0.0.1:50002?discport=0")
+(n3)> admin.addPeer("enode://ffd81a7c3ebd5e86f32330a82dd6e0549d4d308cd5bdc3b005cb31ab59103b76b2d60e15caed8299c7318b72d0b348d47863323ec98001cea881b07cb2b83919@127.0.0.1:50001?discport=0")
+
+
+(n1)> net.peerCount
+	{2}
+(n2)> net.peerCount
+	{2}
+(n3)> net.peerCount
+	{2}
+	
+(n1)> miner.start(1)
+
+(n1)> web3.personal.unlockAccount("0x119327C9DE3116acE0FddA193DA22F1F4302DBfe", "password", 10000)
+
+
+(n1)> eth.getBalance(eth.accounts[0])
+	{1.285999999999e+21}
+(n1)> > miner.stop()
+
+(n2)> eth.getBalance(eth.accounts[0])
+	{4000000000}
+
+(n1)> eth.sendTransaction({from: "0x119327c9de3116ace0fdda193da22f1f4302dbfe", to: "0x1ed23f7a370a309e7609a078aa39cbbfc7e76109", value: "74000000000000000"})
+	{"0x39a6940b4c501db2f6b0a6b1e6feca18db4b3f4b5c09f61776d1bd32150fced5"}
+
+(n2)> eth.getBalance(eth.accounts[0])
+	{888074000008000000000}
