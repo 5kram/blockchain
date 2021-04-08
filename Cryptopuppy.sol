@@ -19,6 +19,8 @@ contract Cryptopuppy {
     
     Puppy[] public puppies;
     
+    /* Mint a unique puppy.
+     */
     function mint(string memory _name) public payable {
         require(msg.value == mintingCost, "You have not paid the minting cost!");
         
@@ -33,7 +35,8 @@ contract Cryptopuppy {
     function ownerOf(uint _puppyId) public view returns(address) {
         return puppies[_puppyId].owner;
     }
-    
+    /* Breed two puppies, to create a unique one.
+     */
     function breed(string memory _name, uint _parentId1, uint _parentId2) public {
         require(msg.sender == ownerOf(_parentId1) && msg.sender == ownerOf(_parentId2), "You are not the owner of the puppies!");   
         Puppy memory p;
@@ -43,12 +46,14 @@ contract Cryptopuppy {
         
         puppies.push(p);
     }
-    
+    /* Sell a puppy.
+     */
     function sell(uint _puppyId, uint _salePrice) public {
         require(msg.sender == ownerOf(_puppyId),"You do not own the puppy!");
         puppies[_puppyId].salePrice = _salePrice;
     }
-    
+    /* Buy a puppy.
+     */
     function buy(uint _puppyId) public payable {
         uint salePrice = puppies[_puppyId].salePrice;
         require(salePrice > 0, "This puppy is not for sale!");
