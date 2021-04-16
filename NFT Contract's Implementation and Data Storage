@@ -1,0 +1,76 @@
+          	NFT Contract's Implementation and Data Storage
+	
+Non-Fungible Tokens (NFT) are used to create verifiable digital scarcity. 
+The most widely supported standard for NFT is the ERC721 standard, 
+which defines how NFTs can be created and transferred among other things. 
+Next, we will analyze the implementation of an NFT contract 
+and illustrate how the data of the contract can be stored.
+
+At the core of the NFT implementation we have a mapping from uint256=> address, 
+the reverse of a fungible token. Given that every minted token has an id we map this id to exactly one owner. 
+The main ERC721 contract's functions break up in three categories, getters, transfers and approvals.
+function ownerOf(uint256 tokenId) external view returns (address);
+function balanceOf(address owner) external view returns (uint256);
+are the getters, where the first one returns the `owner` of the NFT token with the given id 
+and the second one returns the total amount of how many NFT tokens the given address owns. 
+The most commonly used transfer function is
+function safeTransferFrom(address from, address to, uint256 tokenId) external payable;
+it transfers the token with the given id to the receiving address, 
+if only the `from` address is the owner or an approved operator, 
+the tokenId exists and the `to` address is either not a smart contract 
+or a smart contract that implements the ERC721 receiver interface.
+function safeTransferFrom(address from, address to, uint256 tokenId, bytes calldata data) external;
+has an additional bytes data field to pass to the receiver hook.
+function transferFrom(address from, address to, uint256 tokenId) external;
+is a non-safe transfer function that does not invoke the transfer hook, thus it is discouraged to use this method.
+Moving on, we have the following approval functions
+function approve(address approveTo, uint256 tokenId) external payable;
+The caller must own the token or be an approved operator 
+and gives permission to `to` to transfer `tokenId` token to another account
+function getApproved(uint256 tokenId) external view returns (address);
+Returns the account approved for `tokenId` token.
+function setApprovalForAll(address operator, bool isApproved) external;
+Approve or remove `operator` as an operator for the caller, 
+if you approve another address, it has full transfer control over all your tokens.
+function isApprovedForAll(address owner, address operator) external view returns (bool);
+Returns if the `operator` is allowed to manage all of the assets of `owner`.
+
+Another important piece with the ERC721 standard is the metadata, which all NFTs must have.
+Metadata provides descriptive information for a tokenId. 
+It includes an optional metadata extension with a name, 
+symbol and for each tokenID a tokenURI which can point to a JSON file with the name (string - NFT name), 
+a description (string - NFT description),  the image (string - NFT image url) for the given token ID 
+and maybe some properties (JSON - NFT further properties). 
+And this where the question "store the metadata on-chain or off-chain?" is raised. 
+You can always store all your metadata on-chain 
+but smart contracts are not well suited to storing or processing large amounts of data, 
+due to high gas costs and the currently low block gas limit. 
+Thus, most contracts utilize off-chain data storage services, centralized or, most recommended, decentralized.
+Storing the content of the NFT in decentralized storage helps preserve the integrity of the NFT data. 
+Decentralized storage platforms break apart the users’ files and distribute them across multiple nodes on their network, 
+making it more secure and trustworthy. 
+With that said, storing NFT data in a decentralized fashion seems like a worthy option. 
+IPFS is a great fit for storing and addressing data for NFTs. 
+
+Another additional optional interface is the enumeration. 
+It contains functions for counting and receiving tokens by the index.
+function totalSupply() external view returns (uint256);
+function tokenByIndex(uint256 _index) external view returns (uint256);
+function tokenOfOwnerByIndex(address _owner, uint256 _index) external view returns (uint256);
+With the totalSupply function you can determine how many NFT's in total exist currently, excluding the burnt ones. 
+The other two functions will return the n'th token from the list of all tokens 
+and from the list of the tokens of that owner, respectively.
+
+In consideration of the foregoing, when it comes to store e.g. images and the metadata in IPFS, 
+we will also need the IPFS companion, which lets us view IPFS data natively in our browsers like Brave or Chrome 
+and Pinata, which allows us to keep our IPFS files up even when our node is down. 
+Once our IPFS node is up, we upload the data of our NFT and then add the metadata JSON objects to IPFS, 
+using the name and attributes from the deployed token. 
+Next, we get the content identifier, or CID, -a label used to point to material in IPFS- 
+of the pinned image we created and add it to our metadata JSON file and we add that file to IPFS too and pin it. 
+Lastly, we copy our CID of our image and JSON metadata file, and add it to our Pinata account.
+
+To conclude, regarding the built of our NFT data storage, 
+a decentralized storage is the only way to go as sharding eliminates the single point of failure, keeping our files secure, 
+ensures the benefit of complete data recovery and resynchronization, in a case of an attack 
+and is permissionless, meaning that no singular authority can control the data on these platforms.
