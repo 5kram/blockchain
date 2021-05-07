@@ -1,0 +1,33 @@
+$ truffle test
+Using network 'development'.
+
+
+Compiling your contracts...
+===========================
+> Everything is up to date, there is nothing to compile.
+
+
+
+  Contract: Auction test
+    ✓ should set highestBid correctly (188ms)
+    ✓ should set contractBalance correctly (38ms)
+    ✓ withdraw() should fail if highestBidder withdraws (601ms)
+    ✓ should return bid value correctly after withdraw()
+    ✓ should set contractBalance correctly after withdraw()
+    ✓ bid() should fail if bid is lower than highestBid (90ms)
+    ✓ withdraw() should fail if user is not a bidder (79ms)
+    ✓ should set highestBid correctly when user bid() again (208ms)
+
+  Contract: contractBalance
+    ✓ should set contractBalance correctly (155ms)
+    ✓ should set contractBalance correctly after withdraw() (72ms)
+
+  Contract: highestBid
+    ✓ should set highestBid correctly (112ms)
+
+  Contract: Higher bidder withdraws
+    ✓ withdraw() should fail if highestBidder withdraws (181ms)
+
+
+  12 passing (2s)
+
