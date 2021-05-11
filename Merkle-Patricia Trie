@@ -1,0 +1,51 @@
+		    64 6f        verb
+		    64 6f 67     puppy
+		    64 6f 67 65  coin
+		    68 6f 72 73  stallion
+		    
+		    
+		     ROOT: EXT NODE
+		---------------------------
+		prefix | shared | next Node
+		   1   |   6    |     |
+		                      |
+		                      |
+		                 BRANCH NODE
+		          -------------------------------------------
+		          0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|value
+		                  |       |
+		                  |       |
+		                  |   LEAF NODE
+		                  | ------------------------
+		                  | prefix | key-end | value
+		                  |   20   | 6f727365| stallion
+		                  |
+		           EXTENTION NODE
+		      ---------------------------
+		      prefix | shared | next Node
+		         1   |   6    |     |
+		                            |
+		                            |
+		                       BRANCH NODE
+		         -------------------------------------------
+		         0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|value
+		                     |                         verb
+		                     |
+		                     |
+		               EXTENTION NODE
+		        ---------------------------
+		        prefix | shared | next Node
+		           1   |   7    |     |
+		                              |
+		                              |
+		                         BRANCH NODE
+		           -------------------------------------------
+		           0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|value
+		                       |                         puppy
+		                       |
+		                       |
+		                   LEAF NODE
+		           --------------------------
+		           | prefix | key-end | value
+		           |   3    |    5    | coin
+		        
