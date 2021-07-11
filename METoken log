@@ -1,0 +1,233 @@
+mark@hp:~$ mkdir METoken
+mark@hp:~$ cd METoken/
+mark@hp:~/METoken$ truffle init
+
+Starting init...
+================
+
+> Copying project files to /home/mark/METoken
+
+Init successful, sweet!
+
+mark@hp:~/METoken$ npm init
+This utility will walk you through creating a package.json file.
+It only covers the most common items, and tries to guess sensible defaults.
+
+See `npm help init` for definitive documentation on these fields
+and exactly what they do.
+
+Use `npm install <pkg>` afterwards to install a package and
+save it as a dependency in the package.json file.
+
+Press ^C at any time to quit.
+package name: (metoken) 
+version: (1.0.0) 
+description: 
+entry point: (truffle-config.js) 
+test command: 
+git repository: 
+keywords: 
+author: 
+license: (ISC) 
+About to write to /home/mark/METoken/package.json:
+
+{
+  "name": "metoken",
+  "version": "1.0.0",
+  "description": "",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
+
+
+Is this OK? (yes) 
+mark@hp:~/METoken$ npm install openzeppelin-solidity@1.12.0
+npm notice created a lockfile as package-lock.json. You should commit this file.
+npm WARN metoken@1.0.0 No description
+npm WARN metoken@1.0.0 No repository field.
+
++ openzeppelin-solidity@1.12.0
+added 1 package from 1 contributor and audited 1 package in 3.984s
+found 0 vulnerabilities
+
+
+
+   ╭────────────────────────────────────────────────────────────────╮
+   │                                                                │
+   │      New major version of npm available! 6.14.8 → 7.19.1       │
+   │   Changelog: https://github.com/npm/cli/releases/tag/v7.19.1   │
+   │               Run npm install -g npm to update!                │
+   │                                                                │
+   ╰────────────────────────────────────────────────────────────────╯
+
+mark@hp:~/METoken$ truffle compile
+
+mark@hp:~/METoken$ npm install dotenv
+
+mark@hp:~/METoken$ npm install web3
+
+mark@hp:~/METoken$ npm install truffle-wallet-provider
+
+mark@hp:~/METoken$ truffle compile
+
+Compiling your contracts...
+===========================
+> Compiling ./contracts/Migrations.sol
+> Artifacts written to /home/mark/METoken/build/contracts
+> Compiled successfully using:
+   - solc: 0.5.16+commit.9c3226ce.Emscripten.clang
+
+
+** Changed solidity version in all contracts
+
+mark@hp:~/METoken$ truffle compile --all
+
+Compiling your contracts...
+===========================
+> Compiling ./contracts/METoken.sol
+> Compiling ./contracts/Migrations.sol
+> Compiling openzeppelin-solidity/contracts/math/SafeMath.sol
+> Compiling openzeppelin-solidity/contracts/token/ERC20/BasicToken.sol
+> Compiling openzeppelin-solidity/contracts/token/ERC20/ERC20.sol
+> Compiling openzeppelin-solidity/contracts/token/ERC20/ERC20Basic.sol
+> Compiling openzeppelin-solidity/contracts/token/ERC20/StandardToken.sol
+> Artifacts written to /home/mark/METoken/build/contracts
+> Compiled successfully using:
+   - solc: 0.5.16+commit.9c3226ce.Emscripten.clang
+
+** Set up ropsten and mainnet infura and added the url on truffle-config.
+
+mark@hp:~/METoken$ truffle compile --all
+
+Compiling your contracts...
+===========================
+> Compiling ./contracts/METoken.sol
+> Compiling ./contracts/Migrations.sol
+> Compiling openzeppelin-solidity/contracts/math/SafeMath.sol
+> Compiling openzeppelin-solidity/contracts/token/ERC20/BasicToken.sol
+> Compiling openzeppelin-solidity/contracts/token/ERC20/ERC20.sol
+> Compiling openzeppelin-solidity/contracts/token/ERC20/ERC20Basic.sol
+> Compiling openzeppelin-solidity/contracts/token/ERC20/StandardToken.sol
+> Artifacts written to /home/mark/METoken/build/contracts
+> Compiled successfully using:
+   - solc: 0.5.16+commit.9c3226ce.Emscripten.clang
+
+mark@hp:~/METoken$ truffle migrate --network ganache
+
+Compiling your contracts...
+===========================
+> Everything is up to date, there is nothing to compile.
+
+
+
+Starting migrations...
+======================
+> Network name:    'ganache'
+> Network id:      5777
+> Block gas limit: 6721975 (0x6691b7)
+
+
+2_deploy_contracts.js
+=====================
+
+   Deploying 'METoken'
+   -------------------
+   > transaction hash:    0x7497cda5f2bae10b0794f60dcc6f30c42dc710083895d9889a42e0c5db79b70f
+   > Blocks: 0            Seconds: 0
+   > contract address:    0xD27B63E10128802C23c753C1178794Aa37CECC47
+   > block number:        5
+   > block timestamp:     1625844239
+   > account:             0x33823346fbe7EA7262F1E967aD58D157eDAd32D9
+   > balance:             99.93000306
+   > gas used:            1088522 (0x109c0a)
+   > gas price:           20 gwei
+   > value sent:          0 ETH
+   > total cost:          0.02177044 ETH
+
+
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:          0.02177044 ETH
+
+
+Summary
+=======
+> Total deployments:   1
+> Final cost:          0.02177044 ETH
+
+
+
+mark@hp:~/METoken$ truffle console --network ganache
+
+truffle(ganache)> 
+
+** Changed function name and then turned function in to constractor
+
+truffle(ganache)> METoken.address
+
+truffle(ganache)> METoken.deployed().then(instance => instance.totalSupply())
+
+METoken.deployed().then(instance => instance.totalSupply())
+BN {
+  negative: 0,
+  words: [ 19625216, 31, <1 empty item> ],
+  length: 2,
+  red: null
+}
+truffle(ganache)> let accounts
+undefined
+truffle(ganache)> web3.eth.getAccounts((err,res) => { accounts = res })
+[
+  '0x27e3f028c3a945F1fDA3B23feF23101Ff317299D',
+  '0x17e2Cc3ca299432a06c47bEB28e87275DdC65d29',
+  '0x2C7a358d38490eAe1Bd4d83c64dd0F5722232808',
+  '0x2aB60b4d218e57dd8B201D1bB80d1e4B7458Cee8',
+  '0x6492F82Baa19E9026E1f7923d9da2322F416625C',
+  '0xb727C8236742eA5D4f269BaE38429CF3767E1CEc',
+  '0x39DC6E8df17959f04f88c74eD2F510352Afd6a18',
+  '0x86db55075bBc9125E900DB8110424031e75E40AF',
+  '0x1D80dc83AaE12b8A50207C38cCB035E4EE0E2Ea1',
+  '0x9eCfc6dB2e9FF181d73bca134a4aE80166459769'
+]
+truffle(ganache)> accounts[0]
+'0x27e3f028c3a945F1fDA3B23feF23101Ff317299D'
+
+truffle(ganache)> METoken.deployed().then(instance => { instance.balanceOf(accounts[0]).then(console.log) })
+undefined
+truffle(ganache)> BN {
+  negative: 0,
+  words: [ 19625216, 31, <1 empty item> ],
+  length: 2,
+  red: null
+}
+
+undefined
+truffle(ganache)> METoken.deployed().then(instance => { instance.transfer(accounts[1], 100000) })
+undefined
+truffle(ganache)> METoken.deployed().then(instance => { instance.balanceOf(accounts[0]).then(console.log) })
+undefined
+truffle(ganache)> BN {
+  negative: 0,
+  words: [ 19525216, 31, <1 empty item> ],
+  length: 2,
+  red: null
+}
+
+undefined
+truffle(ganache)> METoken.deployed().then(instance => { instance.balanceOf(accounts[1]).then(console.log) })
+undefined
+truffle(ganache)> BN {
+  negative: 0,
+  words: [ 100000, <1 empty item> ],
+  length: 1,
+  red: null
+}
+
